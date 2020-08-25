@@ -4,6 +4,7 @@
     Mate10 EMUI 5.1 8.1.0
     P9 EMUI 5.0 8.0.0
     Mate20 EMUI 9.0.0 9.0.0
+    Mate20 EMUI 10.1.0 10
 
 ## framework 提取步骤：
 
